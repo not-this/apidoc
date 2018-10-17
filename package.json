@@ -1,0 +1,17 @@
+{
+  "name": "api-project",
+  "version": "1.0.0",
+  "main": "app.js",
+  "author": "Ashutosh Malguri <ashoo.to2@gmail.com>",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "joi": "^14.0.0",
+    "morgan": "^1.9.1",
+    "nodemon": "^1.18.4"
+  }
+}
