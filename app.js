@@ -7,6 +7,8 @@ mongoose.connect('mongodb://localhost/apiporject')
 // Routes resources
 const users = require('./routes/users')
 const cars = require('./routes/cars')
+const doctors = require('./routes/doctors')
+const patients = require('./routes/patients')
 
 
 // Middlewares
@@ -16,6 +18,9 @@ app.use(logger('dev'))
 // Routes
 app.use('/users',users)
 app.use('/cars',cars)
+app.use('/doctors',doctors)
+app.use('/patients',patients)
+
 // Catch 404 errors and forward them to error handler
 app.use((req,res,next)=>{
   const err = new Error('not found')
