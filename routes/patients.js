@@ -7,40 +7,27 @@ const {validateParam,validateBody,schemas} = require('../helpers/routehelpers')
 router.route('/')
   .post(patientsController.newPatient)
 
-  // .post(validateBody(schemas.userSchema),usersController.newUser)
- router.route('/:patientId')
- .get(patientsController.getPatientProfile)
-// .patch(userController.updatePatientProfile)
+router.route('/:patientId')
+   .get(patientsController.getPatientProfile)
+//    .patch(patientsController.updatePatientProfile)
+//
+// router.route('/doctors')
+//   .get(patientsController.doctorsList)
+//
+// router.route('/doctors/:doctorId')
+//   .get(patientsController.doctorDetails)
+//
+// router.route('/:patiendId/appointmemnts')
+//   .get(patientsController.appointments)
+//
+//   router.route('/:patiendId/appointmemnts/docotrs/:doctorsId/:appointmetId')
+//   .get(patientsController.appointmemnt)
+//   .patch(patientController.updateAppointment)
+//   .delete(patientController.cancelAppointment)
+//
+// router.route('/:patiendId/appointmemnts/doctors/:doctorId')
+//   .post(patientsController.createAppointment)
 
-//
-// router.route('/:userId')
-//   .get(
-//     validateParam(schemas.idSchema,'userId'),
-//     usersController.getUser
-//   )
-//   .put(
-//     [
-//       validateParam(schemas.idSchema,'userId'),
-//       validateBody(schemas.userSchema)
-//     ],usersController.replaceUser
-//   )
-//   .patch(
-//     [
-//       validateParam(schemas.idSchema,'userId'),
-//       validateBody(schemas.userSchemaOptional)
-//     ],
-//     usersController.updateUser
-//   )
-//   .delete()
-//
-// router.route('/:userId/cars')
-//   .get(validateParam(schemas.idSchema,'userId'),usersController.getUserCars)
-//   .post(
-//     [
-//       validateParam(schemas.idSchema,'userId'),
-//       validateBody(schemas.carSchema)
-//     ],
-//     usersController.newUserCars
-//   )
+
 
 module.exports = router

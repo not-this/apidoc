@@ -37,7 +37,7 @@ const doctorSchema = new Schema({
     }
   },
   bookings:[doctorBookingSchema],
-  medical_setup:[{
+  medical_setups:[{
     name:{
       type:String
     },
@@ -50,10 +50,7 @@ const doctorSchema = new Schema({
       type:String
     }],
     days:[String],
-    slots:[{
-      date:[{type:String}], // Many dates
-      time:[{type:Number}] // many slots
-    }],
+    slots:[String],
   }],
   degrees:[String],
   about:String,

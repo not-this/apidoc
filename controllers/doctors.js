@@ -5,14 +5,6 @@ const Doctor = require('../models/doctor')
 
 
 module.exports = {
-  // index: async (req,res,next)=>{
-    // try {
-    //   const users = await User.find({})
-    //   res.status(200).json(users)
-    // } catch(err) {
-    //   next(err )
-    // }
-  // },
 
   newDoctor: async (req,res,next)=>{
     try {
@@ -32,72 +24,126 @@ module.exports = {
     } catch(err) {
       next(err )
     }
-  }
-  //
-  // getUser: async (req,res,next)=>{
-  //   try {
-  //     const {userId} = req.value.params
-  //     const user = await User.findById(userId)
-  //     res.status(200).json(user)
-  //   } catch(err){
-  //     next(err)
-  //   }
-  // },
-  //
-  // replaceUser: async (req,res,next)=>{
-  //   try {
-  //     // enforce the req.body must contain all the fields
-  //     const {userId} = req.value.params
-  //     const newUser = req.value.body
-  //     const result = await User.findByIdAndUpdate(userId, newUser)
-  //     console.log(result)
-  //     res.status(200).json({success:true})
-  //   } catch(err){
-  //     next(err)
-  //   }
-  // },
-  //
-  // updateUser: async (req,res,next)=>{
-  //   try {
-  //     // req.body may contain any number of fields
-  //     const {userId} = req.value.params
-  //     const newUser = req.value.body
-  //     const result = await User.findByIdAndUpdate(userId, newUser)
-  //     console.log(result)
-  //     res.status(200).json({success:true})
-  //   } catch(err){
-  //     next(err)
-  //   }
-  // },
-  //
-  // getUserCars:async (req,res,next) => {
-  //   try {
-  //     const {userId} = req.value.params
-  //     const user = await User.findById(userId).populate('cars')
-  //     console.log('user\'s car ',user )
-  //     res.status(200).json(user.cars)
-  //   } catch(err){
-  //     next(err)
-  //   }
-  // },
-  //
-  // newUserCars: async (req,res,next) => {
-  //   try {
-  //     const {userId} = req.value.params
-  //     const newCar = new Car(req.value.body)
-  //     const user = await User.findById(userId)
-  //     newCar.seller = user
-  //     await newCar.save()
-  //     user.cars.push(newCar._id)
-  //     await user.save()
-  //     res.status(200).json(newCar)
-  //   } catch(err){
-  //     next(err)
-  //   }
-  // }
-  //
-  //
-  //
-  //
+  },
 
+  updateDoctorProfile: async(req,res,next)=>{
+    try {
+      const doc = await Doctor.findById(req.params.doctorId)
+      // const address = doc.medical_setups.id(req.params.setupId)
+      doc.set(req.body)
+      await doc.save()
+      res.status(200).json(doc)
+    } catch(err) {
+      next(err )
+    }
+  },
+  // getAppointment: async(req,res,next)=>{
+  //   try {
+  //
+  //   } catch(err) {
+  //     next(err )
+  //   }
+  // },
+  // updateAppointment: async(req,res,next)=>{
+  //   try {
+  //
+  //   } catch(err) {
+  //     next(err )
+  //   }
+  // },
+  // deleteAppointment: async(req,res,next)=>{
+  //   try {
+  //
+  //   } catch(err) {
+  //     next(err )
+  //   }
+  // },
+  // appointments: async(req,res,next)=>{
+  //   try {
+  //
+  //   } catch(err) {
+  //     next(err )
+  //   }
+  // },
+  createMedicalSetup: async(req,res,next)=>{
+    try {
+      // console.log(req.params)
+      // console.log(req.body)
+      const doctorId = req.params.doctorId
+      const newSetup = req.body
+      const doctor = await Doctor.findById(doctorId)
+      doctor.medical_setups.push(newSetup)
+      res.status(200).json({success:true})
+    } catch(err) {
+      next(err )
+    }
+  },
+  listMedicalSetups: async(req,res,next)=>{
+    try {
+      const doc = await Doctor.findById(req.params.doctorId)
+      res.status(200).json(doc.medical_setups)
+    } catch(err) {
+      next(err )
+    }
+  },
+  getMedicalSetup: async(req,res,next)=>{
+    try {
+      const doc = await Doctor.findById(req.params.doctorId)
+      const medical_setup = doc.medical_setups.id(req.params.setupId)
+      res.status(200).json(medical_setup)
+    } catch(err) {
+      next(err )
+    }
+  },
+  updateMedicalSetup: async(req,res,next)=>{
+    try {
+      const doc = await Doctor.findById(req.params.doctorId)
+      const address = doc.medical_setups.id(req.params.setupId)
+      address.set(req.body)
+      await doc.save()
+      res.status(200).send({ doc })
+      // Promise version -
+
+      // Doctor.findById(req.params.doctorId)
+      //   .then((doc) => {
+      //     const address = doc.medical_setups.id(req.params.setupId);
+      //     address.set(req.body);
+      //
+      //
+      //     return doc.save();
+      //   })
+      //   .then((doc) => {
+      //     res.status(200).send({ doc });
+      //   })
+
+    } catch(err) {
+      next(err )
+    }
+  },
+
+//   db.collection.update(
+//   {
+//     "_id" : 1,
+//     "medications.id" : 23,
+//     "medications.prescriptions.id" : 77 },
+//   {
+//     $set : { "medications.prescriptions.$.quantity" : 30 }
+//   },
+//   false,
+//   true
+// )
+  deleteMedicalSetup: async(req,res,next)=>{
+    try {
+      const doc = await Doctor.findById(req.params.doctorId)
+      if(!doc.medical_setups.id(req.params.setupId)){
+        return res.status(400).json({message:"already deleted"})
+      }
+      const removed = doc.medical_setups.pull(req.params.setupId)
+      await doc.save()
+      console.log(removed)
+      res.status(200).json({success:true})
+    } catch(err) {
+      next(err )
+    }
+  },
 }

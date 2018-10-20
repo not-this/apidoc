@@ -3,44 +3,32 @@ const router = express.Router()
 const doctorsController = require('../controllers/doctors')
 const {validateParam,validateBody,schemas} = require('../helpers/routehelpers')
 
-// -->  hostname/doctors/
-router.route('/new')
+router.route('/')
   .post(doctorsController.newDoctor)
 
-  // .post(validateBody(schemas.userSchema),usersController.newUser)
- router.route('/:doctorId')
- .get(doctorsController.getDoctorProfile)
+router.route('/:doctorId')
+  .get(doctorsController.getDoctorProfile)
+  .patch(doctorsController.updateDoctorProfile)
+
+router.route('/:doctorId/medical-setups')
+  .post(doctorsController.createMedicalSetup)
+  .get(doctorsController.listMedicalSetups)
+//
+router.route('/:doctorId/medical-setups/:setupId')
+  .get(doctorsController.getMedicalSetup)
+  .patch(doctorsController.updateMedicalSetup)
+  .delete(doctorsController.deleteMedicalSetup)
+//
+// router.router('/:doctorId/appointments/patients/:patientId/:appointmentId')
+//   .get(doctorsController.getAppointment)
+//   .patch(doctorsController.updateAppointment)
+//   .delete(doctorsController.deleteAppointment)
+//
+// router.route('/:doctorId/appointments')
+//   .get(doctorsController.appointments)
+//
 
 
-//
-// router.route('/:userId')
-//   .get(
-//     validateParam(schemas.idSchema,'userId'),
-//     usersController.getUser
-//   )
-//   .put(
-//     [
-//       validateParam(schemas.idSchema,'userId'),
-//       validateBody(schemas.userSchema)
-//     ],usersController.replaceUser
-//   )
-//   .patch(
-//     [
-//       validateParam(schemas.idSchema,'userId'),
-//       validateBody(schemas.userSchemaOptional)
-//     ],
-//     usersController.updateUser
-//   )
-//   .delete()
-//
-// router.route('/:userId/cars')
-//   .get(validateParam(schemas.idSchema,'userId'),usersController.getUserCars)
-//   .post(
-//     [
-//       validateParam(schemas.idSchema,'userId'),
-//       validateBody(schemas.carSchema)
-//     ],
-//     usersController.newUserCars
-//   )
+
 
 module.exports = router
