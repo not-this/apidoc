@@ -8,25 +8,25 @@ router.route('/')
   .post(patientsController.newPatient)
 
 router.route('/:patientId')
-   .get(patientsController.getPatientProfile)
+   // .get(patientsController.getPatientProfile)
 //    .patch(patientsController.updatePatientProfile)
 //
-// router.route('/doctors')
-//   .get(patientsController.doctorsList)
+router.route('/doctors')
+  .get(patientsController.doctorsList)
 //
-// router.route('/doctors/:doctorId')
-//   .get(patientsController.doctorDetails)
+router.route('/doctors/:doctorId')
+  .get(patientsController.doctorDetails)
 //
-// router.route('/:patiendId/appointmemnts')
-//   .get(patientsController.appointments)
+router.route('/:patientId/appointments')
+  .get(patientsController.appointments)
 //
-//   router.route('/:patiendId/appointmemnts/docotrs/:doctorsId/:appointmetId')
-//   .get(patientsController.appointmemnt)
-//   .patch(patientController.updateAppointment)
-//   .delete(patientController.cancelAppointment)
+  router.route('/:patientId/appointments/doctors/:doctorsId/:appointmentId')
+  .get(patientsController.appointmemnt)
+  // .patch(patientController.updateAppointment)
+  // .delete(patientController.cancelAppointment)
 //
-// router.route('/:patiendId/appointmemnts/doctors/:doctorId')
-//   .post(patientsController.createAppointment)
+router.route('/:patientId/appointments/doctors/:doctorId')
+  .post(patientsController.createAppointment)
 
 
 

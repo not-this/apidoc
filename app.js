@@ -16,8 +16,6 @@ app.use(bodyParser.json());
 app.use(logger('dev'))
 
 // Routes
-app.use('/users',users)
-app.use('/cars',cars)
 app.use('/doctors',doctors)
 app.use('/patients',patients)
 
