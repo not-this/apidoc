@@ -25,11 +25,11 @@ const patient_current_locationGeoSchema= new Schema({
 })
 
 const patientSchema = new Schema({
-  firstname:{
+  firstName:{
     type:String
     // required:true
   },
-  lastname:{
+  lastName:{
     type:String
     // required:true
   },
@@ -49,7 +49,10 @@ const patientSchema = new Schema({
     pin_code:Number,
   },
   current_location:patient_current_locationGeoSchema,
-  bookings:[patientBookingSchema],
+  bookings:[{
+    type:Schema.Types.ObjectId,
+    ref:'booking'
+  }],
   contact_number:{
     type:Number
     // Required:true

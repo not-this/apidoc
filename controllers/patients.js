@@ -2,7 +2,7 @@ const Joi = require('joi')
 
 const Doctor = require('../models/doctor')
 const Patient = require('../models/patient')
-
+const Booking = require('../models/booking')
 module.exports = {
   newPatient: async (req,res,next)=>{
     try {
@@ -59,8 +59,8 @@ module.exports = {
   // },
   appointments: async(req,res,next)=>{
     try {
-      const patient = await Patient.findById(req.params.patientId)
-      res.status(200).json(patient.bookings)
+      const patient = await Patient.findById(req.params.patientId).populate('bookings')
+      res.status(200).json(patient)
     } catch(err) {
       next(err )
     }
@@ -70,14 +70,8 @@ module.exports = {
     try {
       console.log("HERE")
       const {patientId,appointmentId} = req.params
-      const patient = await Patient.findById(patientId)
-      const booking = await patient.bookings.id(appointmentId)
-      const newObj = JSON.parse(JSON.stringify(booking))
-      const doctorId = newObj.doctor
-      delete newObj.doctor
-      const doctor_details = await Doctor.findById(doctorId,'firstName lastName degrees contact_numbers address_lines location')
-      newObj.doctorDetails = doctor_details
-      res.status(200).json(newObj)
+      const patient = await Patient.findById(patientId).populate('bookings')
+      console.log(patient)
     } catch(err) {
       next(err )
     }
@@ -104,16 +98,16 @@ module.exports = {
       const {patientId, doctorId} = req.params
       const patient = await Patient.findById(patientId)
       const doctor = await Doctor.findById(doctorId)
-      let docObj = req.body
-      let patientObj = req.body
-      docObj.patient = patientId
-      patientObj.doctor = doctorId
-      patient.bookings.push(patientObj)
-      doctor.bookings.push(docObj)
+      const bookingObj = JSON.parse(JSON.stringify(req.body))
+      bookingObj.patientId = patientId
+      bookingObj.doctorId = doctorId
+      const booking = new Booking(bookingObj)
+      const book = await booking.save()
+      // console.log(book._id)
+      patient.bookings.push(book._id)
+      doctor.bookings.push(book._id)
       await patient.save()
       await doctor.save()
-      console.log(patient.bookings)
-      res.status(200).json({success:true})
     } catch(err) {
       next(err )
     }

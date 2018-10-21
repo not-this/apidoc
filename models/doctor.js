@@ -36,7 +36,10 @@ const doctorSchema = new Schema({
       type:String
     }
   },
-  bookings:[doctorBookingSchema],
+  bookings:[{
+    type:Schema.Types.ObjectId,
+    ref:'booking'
+  }],
   medical_setups:[{
     name:{
       type:String
