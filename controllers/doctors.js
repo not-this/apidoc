@@ -2,7 +2,8 @@ const Joi = require('joi')
 
 const User = require('../models/user')
 const Doctor = require('../models/doctor')
-
+const Patient = require('../models/patient')
+const Booking = require('../models/booking')
 
 module.exports = {
 
@@ -37,13 +38,16 @@ module.exports = {
       next(err )
     }
   },
-  // getAppointment: async(req,res,next)=>{
-  //   try {
-  //
-  //   } catch(err) {
-  //     next(err )
-  //   }
-  // },
+
+  getAppointment: async(req,res,next)=>{
+    try {
+      const doctor = await Doctor.findById(req.params.doctorId)
+      res.status(200).json(doctor.active_bookings.id(req.params.appointmentId))
+    } catch(err) {
+      next(err )
+    }
+  },
+
   // updateAppointment: async(req,res,next)=>{
   //   try {
   //
@@ -51,24 +55,32 @@ module.exports = {
   //     next(err )
   //   }
   // },
-  // deleteAppointment: async(req,res,next)=>{
-  //   try {
-  //
-  //   } catch(err) {
-  //     next(err )
-  //   }
-  // },
-  // appointments: async(req,res,next)=>{
-  //   try {
-  //
-  //   } catch(err) {
-  //     next(err )
-  //   }
-  // },
+  cancelAppointment: async(req,res,next)=>{
+    try {
+      const {appointmentId,doctorId} = req.params
+      const doctor = await Doctor.findById(doctorId)
+      const booking = doctor.active_bookings.id(appointmentId)
+      const patientId = booking.patientId
+      Patient.findOneAndUpdate({ _id : patientId },  { $pull: { active_bookings: { bookingId: booking.bookingId }}} )
+      doctor.active_bookings.pull(booking)
+      await doctor.save()
+      await Booking.findOneAndUpdate({_id:booking.bookingId}, { $set: { completed: true }})
+      res.status(200).send({success:true})
+    } catch(err) {
+      next(err )
+    }
+  },
+  appointments: async(req,res,next)=>{
+    try {
+      const doctor = await Doctor.findById(req.params.doctorId)
+      console.log(doctor.active_bookings)
+      res.status(200).json(doctor.active_bookings)
+    } catch(err) {
+      next(err )
+    }
+  },
   createMedicalSetup: async(req,res,next)=>{
     try {
-      // console.log(req.params)
-      // console.log(req.body)
       const doctorId = req.params.doctorId
       const newSetup = req.body
       const doctor = await Doctor.findById(doctorId)

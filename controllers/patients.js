@@ -15,23 +15,24 @@ module.exports = {
     }
   },
 
-  // getPatientProfile: async(req,res,next)=>{
-  //   try {
-  //     const patient = await User.findById(req.params.patientId)
-  //     res.status(200).json(patient)
-  //   } catch(err) {
-  //     next(err )
-  //   }
-  // },
+  getPatientProfile: async(req,res,next)=>{
+    try {
+      const patient = await Patient.findById(req.params.patientId)
+      res.status(200).json(patient)
+    } catch(err) {
+      next(err )
+    }
+  },
 
-  // updatePatientProfile: async(req,res,next)=>{
-  //   try {
-  //
-  //   } catch(err) {
-  //     next(err )
-  //   }
-  // },
-  //
+  updatePatientProfile: async(req,res,next)=>{
+    try {
+      await Patient.findByIdAndUpdate(req.params.patientId, { $set:req.body })
+      res.status(200).json({success:true})
+    } catch(err) {
+      next(err )
+    }
+  },
+
   doctorsList: async(req,res,next)=>{
     try {
       const doctors = await Doctor.find({},'firstName lastName degrees location')
@@ -94,18 +95,18 @@ module.exports = {
       const booking = patient.active_bookings.id(appointmentId)
       const doctorId = booking.doctorId
 
-      const doctor = await Doctor.findOneAndUpdate({ _id : doctorId },  { $pull: { active_bookings: { bookingId: booking.bookingId }}} )
+      await Doctor.findOneAndUpdate({ _id : doctorId },  { $pull: { active_bookings: { bookingId: booking.bookingId }}} )
 
       patient.active_bookings.pull(booking)
       await patient.save()
 
-      const booking_status = await Booking.findOneAndUpdate({_id:booking.bookingId}, { $set: { completed: true }})
+      await Booking.findOneAndUpdate({_id:booking.bookingId}, { $set: { completed: true }})
       res.status(200).send({success:true})
     } catch(err) {
       next(err )
     }
   },
-  //
+
   createAppointment: async(req,res,next)=>{
     try {
       const {patientId, doctorId} = req.params

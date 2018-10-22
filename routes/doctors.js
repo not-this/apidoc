@@ -13,20 +13,20 @@ router.route('/:doctorId')
 router.route('/:doctorId/medical-setups')
   .post(doctorsController.createMedicalSetup)
   .get(doctorsController.listMedicalSetups)
-//
+
 router.route('/:doctorId/medical-setups/:setupId')
   .get(doctorsController.getMedicalSetup)
   .patch(doctorsController.updateMedicalSetup)
   .delete(doctorsController.deleteMedicalSetup)
-//
-// router.router('/:doctorId/appointments/patients/:patientId/:appointmentId')
-//   .get(doctorsController.getAppointment)
+
+router.route('/:doctorId/appointments/:appointmentId')
+  .get(doctorsController.getAppointment)
 //   .patch(doctorsController.updateAppointment)
-//   .delete(doctorsController.deleteAppointment)
-//
-// router.route('/:doctorId/appointments')
-//   .get(doctorsController.appointments)
-//
+  .delete(doctorsController.cancelAppointment)
+
+router.route('/:doctorId/appointments')
+  .get(doctorsController.appointments)
+
 
 
 
