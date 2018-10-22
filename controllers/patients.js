@@ -60,7 +60,7 @@ module.exports = {
   appointments: async(req,res,next)=>{
     try {
       const patient = await Patient.findById(req.params.patientId).populate('bookings')
-      res.status(200).json(patient)
+      res.status(200).json(patient.bookings)
     } catch(err) {
       next(err )
     }
@@ -103,11 +103,19 @@ module.exports = {
       bookingObj.doctorId = doctorId
       const booking = new Booking(bookingObj)
       const book = await booking.save()
-      // console.log(book._id)
       patient.bookings.push(book._id)
       doctor.bookings.push(book._id)
+
+      const bookingObjActive = JSON.parse(JSON.stringify(book))
+      bookingObjActive.bookingId = bookingObjActive._id
+      delete bookingObjActive._id
+      patient.active_bookings.push(bookingObjActive)
+      doctor.active_bookings.push(bookingObjActive)
+
       await patient.save()
       await doctor.save()
+
+      res.status(200).json({success:true})
     } catch(err) {
       next(err )
     }

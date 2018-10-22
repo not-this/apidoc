@@ -13,7 +13,8 @@ const bookingSchema = new Schema({
   slot: Number,
   place: String,
   description: String,
-  completed: false
+  completed: false,
+  result:Number
 })
 
 const Booking = mongoose.model('booking',bookingSchema)
