@@ -20,10 +20,12 @@ router.route('/doctors/:doctorId')
 router.route('/:patientId/appointments')
   .get(patientsController.appointments)
 //
-  router.route('/:patientId/appointments/doctors/:doctorsId/:appointmentId')
+router.route('/:patientId/appointments/doctors/:doctorsId/:appointmentId')
   .get(patientsController.appointmemnt)
   // .patch(patientController.updateAppointment)
-  // .delete(patientsController.cancelAppointment)
+
+router.route('/:patientId/appointments/:appointmentId')
+  .delete(patientsController.cancelAppointment)
 //
 router.route('/:patientId/appointments/doctors/:doctorId')
   .post(patientsController.createAppointment)

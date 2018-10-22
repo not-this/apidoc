@@ -85,30 +85,48 @@ module.exports = {
   //   }
   // },
   //
-  // cancelAppointment: async(req,res,next)=>{
-  //   try {
-  //
-  //   } catch(err) {
-  //     next(err )
-  //   }
-  // },
+  cancelAppointment: async(req,res,next)=>{
+    try {
+      const {appointmentId,patientId} = req.params
+      console.log("here")
+      // const booking = await Booking.findByIdAndUpdate(id, {completed:true})
+      const patient = await Patient.findById(patientId)
+      const booking = patient.active_bookings.id(appointmentId)
+      const doctorId = booking.doctorId
+
+      const doctor = await Doctor.findOneAndUpdate({ _id : doctorId },  { $pull: { active_bookings: { bookingId: booking.bookingId }}} )
+
+      patient.active_bookings.pull(booking)
+      await patient.save()
+
+      const booking_status = await Booking.findOneAndUpdate({_id:booking.bookingId}, { $set: { completed: true }})
+      res.status(200).send({success:true})
+    } catch(err) {
+      next(err )
+    }
+  },
   //
   createAppointment: async(req,res,next)=>{
     try {
       const {patientId, doctorId} = req.params
+
       const patient = await Patient.findById(patientId)
       const doctor = await Doctor.findById(doctorId)
+
       const bookingObj = JSON.parse(JSON.stringify(req.body))
       bookingObj.patientId = patientId
       bookingObj.doctorId = doctorId
+
       const booking = new Booking(bookingObj)
       const book = await booking.save()
+
       patient.bookings.push(book._id)
       doctor.bookings.push(book._id)
 
       const bookingObjActive = JSON.parse(JSON.stringify(book))
       bookingObjActive.bookingId = bookingObjActive._id
       delete bookingObjActive._id
+
       patient.active_bookings.push(bookingObjActive)
       doctor.active_bookings.push(bookingObjActive)
 

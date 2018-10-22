@@ -30,7 +30,7 @@ const doctorSchema = new Schema({
   local_auth:{
     email:{
       type:String,
-      unique:true
+      // unique:true
     },
     password:{
       type:String
