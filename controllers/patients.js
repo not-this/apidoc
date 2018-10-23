@@ -52,10 +52,8 @@ module.exports = {
   uploadProfilePicture: async(req,res,next)=>{
     try {
       const patient = await Patient.findById(req.params.patientId)
-      doctor.profile_img.data = Buffer(fs.readFileSync(req.file.path), 'base64')
-      // yourBufferData.toString('base64')
-      doctor.profile_img.contentType = 'image/png'
-      await doctor.save()
+      patient.photo = req.file.filename
+      await patient.save()
       res.status(201).send({success:true})
     } catch(err) {
       next(err )

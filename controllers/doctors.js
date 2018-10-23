@@ -57,14 +57,40 @@ module.exports = {
   uploadProfilePicture: async(req,res,next)=>{
     try {
 
-      // console.log(req.file)
+      // const upload = multer({
+      //   storage: storage,
+      //   limits:{fileSize: 1000000},
+      //   fileFilter: function(req, file, cb){
+      //     checkFileType(file, cb);
+      //   }
+      // }).single('myImage');
+      //
+      // // Check File Type
+      // function checkFileType(file, cb){
+      //   // Allowed ext
+      //   const filetypes = /jpeg|jpg|png|gif/;
+      //   // Check ext
+      //   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+      //   // Check mime
+      //   const mimetype = filetypes.test(file.mimetype);
+      //
+      //   if(mimetype && extname){
+      //     return cb(null,true);
+      //   } else {
+      //     cb('Error: Images Only!');
+      //   }
+      // }
+      // multer(multerConfig).single('photo')
+      console.log(req.file)
       const doctor = await Doctor.findById(req.params.doctorId)
-      doctor.profile_img.data = Buffer(fs.readFileSync(req.file.path), 'base64')
-      doctor.profile_img.contentType = 'image/png'
+      // doctor.profile_img.data = Buffer(fs.readFileSync(req.file.path), 'base64')
+      // doctor.profile_img.contentType = 'image/png'
+      // req.body.photo = req.file.filename
+      doctor.photo = req.file.filename
       await doctor.save()
       res.status(201).send({success:true})
     } catch(err) {
-      next(err )
+      next(err)
     }
   },
   cancelAppointment: async(req,res,next)=>{

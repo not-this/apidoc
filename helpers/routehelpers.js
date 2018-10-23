@@ -1,23 +1,42 @@
 const Joi = require('joi')
 
 module.exports = {
-  validateParam: (schema,name)=>{
+  validateParam: (schema,names)=>{
     return (req,res,next)=>{
-      const result = Joi.validate({param: req['params'][name]},schema )
-      if(result.error){
-        return res.status(400).json(result.error)
-      } else {
-        if(!req.value){
-          req.value = {}
+
+      names.forEach((name)=>{
+        const result = Joi.validate({param: req['params'][name]},schema )
+        if(result.error){
+          return res.status(400).json(result.error)
+        } else {
+          if(!req.value){
+            req.value = {}
+          }
+          if(!req.value['params']){
+            req.value['params'] = {}
+          }
+          req.value['params'][name] = result.value.param
         }
-        if(!req.value['params']){
-          req.value['params'] = {}
-        }
-        req.value['params'][name] = result.value.param
-        next()
-      }
+      })
+      next()
     }
   },
+      // const result = Joi.validate({param: req['params'][name[0]]},schema )
+  //     const result = Joi.validate({param: req['params'][names]},schema )
+  //     if(result.error){
+  //       return res.status(400).json(result.error)
+  //     } else {
+  //       if(!req.value){
+  //         req.value = {}
+  //       }
+  //       if(!req.value['params']){
+  //         req.value['params'] = {}
+  //       }
+  //       req.value['params'][name] = result.value.param
+  //       next()
+  //     }
+  //   }
+  // },
 
   validateBody:(schema) => {
       return (req,res,next) =>{
@@ -36,9 +55,61 @@ module.exports = {
         }
       }
   },
+  validateFile:(schema) => {
+      return (req,res,next) =>{
+        const result = Joi.validate(req.file, schema)
+        if(result.error){
+          return res.status(400).json(result.error)
+        } else {
+          if(!req.value)
+            req.value = {}
+
+          if(!req.value['body'])
+            req.value['body'] = {}
+
+          req.value['file'] = result.value
+          next()
+        }
+      }
+  },
 
 
   schemas: {
+    // Common schema
+    // POST for creating new profile picture for doctor and patient
+    newProfilePictureSchema:Joi.object().keys({}),  // Check for req.file instead req.params object (candidate for new validation)
+
+    // Doctor POST
+    newDoctorSchema:Joi.object().keys({}),
+    newMedicalSetupSchema:Joi.object().keys({}),
+
+    // Doctor PATCH
+    updateDoctorProfileSchema:Joi.object().keys({}),
+    updateMedicalSetupSchema:Joi.object().keys({}),
+
+    // Doctor GET - use modified validateParam to validate schemas who require only params
+
+    // getDoctorProfileSchema:Joi.object().keys({}),
+    // getDoctorMedicalSetupsSchema:Joi.object().keys({}),
+    // getDoctorMedicalSetupSchema:Joi.object().keys({}),
+    // getDoctorAppointmentSchema:Joi.object().keys({}),
+    // getDoctorAppointmentsSchema:Joi.object().keys({}),
+
+    // Patient POST
+    newPatientSchema:Joi.object().keys({}),
+    newAppointmentSchema:Joi.object().keys({}),
+
+    // Patient PATCH
+    updatePatientProfileSchema:Joi.object().keys({}),
+
+    // Patient GET - use modified validateParam to validate schemas who require only params
+
+    // getPatientProfileSchema:
+    // getDoctorsListSchema:
+    // getDoctorDetailsSchema:
+    // getPatientAppointmentSchema:
+    // getPatientAppointmentSchema:
+
     userSchema:Joi.object().keys({
       firstName:Joi.string().required(),
       lastName:Joi.string().required(),

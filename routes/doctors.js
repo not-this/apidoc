@@ -4,46 +4,6 @@ const router = express.Router()
 const doctorsController = require('../controllers/doctors')
 const {validateParam,validateBody,schemas} = require('../helpers/routehelpers')
 
-// const multerConfig = {
-
-//   //specify diskStorage (another option is memory)
-//   storage: multer.diskStorage({
-//
-//     //specify destination
-//     destination: function(req, file, next){
-//       next(null, './public/photo-storage');
-//     },
-//
-//     //specify the filename to be unique
-//     filename: function(req, file, next){
-//       console.log(file);
-//       //get the file mimetype ie 'image/jpeg' split and prefer the second value ie'jpeg'
-//       const ext = file.mimetype.split('/')[1];
-//       //set the file fieldname to a unique name containing the original name, current datetime and the extension.
-//       next(null, file.fieldname + '-' + Date.now() + '.'+ext);
-//     }
-//   }),
-//
-//   // filter out and prevent non-image files.
-//   fileFilter: function(req, file, next){
-//         if(!file){
-//           next();
-//         }
-//
-//       // only permit image mimetypes
-//       const image = file.mimetype.startsWith('image/');
-//       if(image){
-//         console.log('photo uploaded');
-//         next(null, true);
-//       }else{
-//         console.log("file not supported")
-//         //TODO:  A better message response to user on failure.
-//         return next();
-//       }
-//   }
-// };
-
-
 const multerConfig = {
   storage : multer.diskStorage({
     destination: (req,file,next)=>{
@@ -51,25 +11,38 @@ const multerConfig = {
     },
 
     filename: (req,file,next)=>{
-      console.log(file)
       const ext = file.mimetype.split('/')[1]
       next(null, file.fieldname + '-' + Date.now() + '.'+ext)
-    },
-
-    fileFilter: (req,file,next)=>{
-      if(!file){
-        next()
-      }
-      const image = file.minetype.startwith('image/')
-      if(image){
-        console.log('photo uploaded')
-        next()
-      } else {
-        console.log('file not supported')
-        next()
-      }
     }
-  })
+  }),
+  fileFilter: (req,file,next)=>{
+    console.log(file)
+    const filetypes = /jpeg|jpg|png|gif/
+    const extname = filetypes.test(file.mimetype.split('/')[1].toLowerCase())
+    const mimetype = filetypes.test(file.mimetype)
+    console.log('here')
+    if(!file){
+      next("Please upload a file")
+    }
+    let image = false
+    if(file.mimetype.split('/')[0].toLowerCase() === 'image'){
+      image = true
+    }
+
+    if(image){
+      if(mimetype && extname){
+      console.log('photo uploaded')
+        next(null, true)
+      } else {
+      console.log('file not supported')
+        console.log("file not supported")
+        next("File not supported")
+      }
+    } else {
+      console.log("File not supported")
+      next("File not supported")
+    }
+  }
 }
 
 router.route('/')

@@ -21,6 +21,7 @@ const patientSchema = new Schema({
     type:String
     // required:true
   },
+  photo:String,
   profile_img: { data: Buffer, contentType: String },
   local_auth:{
     email:{

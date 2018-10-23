@@ -3,3 +3,4 @@ new
 new.pub
 yarn.lock
 yarn-error.log
+public/photo-storage/*

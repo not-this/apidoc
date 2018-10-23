@@ -16,6 +16,7 @@ const medical_setupGeoSchema= new Schema({
 const doctorSchema = new Schema({
   firstName:String,
   lastName:String,
+  photo:String,
   profile_img: { data: Buffer, contentType: String },
   local_auth:{
     email:{
@@ -62,7 +63,8 @@ const doctorSchema = new Schema({
   }],
   degrees:[String],
   about:String,
-  achievements:String,
+  treatments:[String],
+  speciality:[String],
   live:false
 })
 
