@@ -4,15 +4,16 @@ const bodyParser = require('body-parser')
 const app = express()
 const mongoose = require('mongoose')
 mongoose.connect('mongodb://localhost/apiporject')
+
 // Routes resources
-const users = require('./routes/users')
-const cars = require('./routes/cars')
 const doctors = require('./routes/doctors')
 const patients = require('./routes/patients')
 
 
 // Middlewares
 app.use(bodyParser.json());
+app.use('/', express.static(__dirname + '/public'));
+
 app.use(logger('dev'))
 
 // Routes

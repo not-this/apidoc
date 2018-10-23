@@ -1,18 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const patientBookingSchema = new Schema({
-  doctor: {
-    type:Schema.Types.ObjectId,
-    ref:'doctor'
-  },
-  date: Date,
-  slot: Number,
-  place: String,
-  description: String,
-  completed: false
-})
-
 const patient_current_locationGeoSchema= new Schema({
   type:{
     type:String,
@@ -33,6 +21,7 @@ const patientSchema = new Schema({
     type:String
     // required:true
   },
+  profile_img: { data: Buffer, contentType: String },
   local_auth:{
     email:{
       type:String,

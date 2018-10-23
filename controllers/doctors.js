@@ -1,6 +1,5 @@
 const Joi = require('joi')
-
-const User = require('../models/user')
+const fs = require('fs')
 const Doctor = require('../models/doctor')
 const Patient = require('../models/patient')
 const Booking = require('../models/booking')
@@ -55,6 +54,19 @@ module.exports = {
   //     next(err )
   //   }
   // },
+  uploadProfilePicture: async(req,res,next)=>{
+    try {
+
+      // console.log(req.file)
+      const doctor = await Doctor.findById(req.params.doctorId)
+      doctor.profile_img.data = Buffer(fs.readFileSync(req.file.path), 'base64')
+      doctor.profile_img.contentType = 'image/png'
+      await doctor.save()
+      res.status(201).send({success:true})
+    } catch(err) {
+      next(err )
+    }
+  },
   cancelAppointment: async(req,res,next)=>{
     try {
       const {appointmentId,doctorId} = req.params
@@ -133,17 +145,6 @@ module.exports = {
     }
   },
 
-//   db.collection.update(
-//   {
-//     "_id" : 1,
-//     "medications.id" : 23,
-//     "medications.prescriptions.id" : 77 },
-//   {
-//     $set : { "medications.prescriptions.$.quantity" : 30 }
-//   },
-//   false,
-//   true
-// )
   deleteMedicalSetup: async(req,res,next)=>{
     try {
       const doc = await Doctor.findById(req.params.doctorId)
