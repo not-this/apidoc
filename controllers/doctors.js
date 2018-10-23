@@ -19,7 +19,7 @@ module.exports = {
 
   getDoctorProfile: async(req,res,next)=>{
     try {
-      const doctor = await User.findById(req.params.doctorId)
+      const doctor = await Doctor.findById(req.params.doctorId)
       res.status(200).json(doctor)
     } catch(err) {
       next(err )
@@ -121,8 +121,10 @@ module.exports = {
     try {
       const doctorId = req.params.doctorId
       const newSetup = req.body
+      console.log(newSetup)
       const doctor = await Doctor.findById(doctorId)
       doctor.medical_setups.push(newSetup)
+      await doctor.save()
       res.status(200).json({success:true})
     } catch(err) {
       next(err )

@@ -21,23 +21,6 @@ module.exports = {
       next()
     }
   },
-      // const result = Joi.validate({param: req['params'][name[0]]},schema )
-  //     const result = Joi.validate({param: req['params'][names]},schema )
-  //     if(result.error){
-  //       return res.status(400).json(result.error)
-  //     } else {
-  //       if(!req.value){
-  //         req.value = {}
-  //       }
-  //       if(!req.value['params']){
-  //         req.value['params'] = {}
-  //       }
-  //       req.value['params'][name] = result.value.param
-  //       next()
-  //     }
-  //   }
-  // },
-
   validateBody:(schema) => {
       return (req,res,next) =>{
         const result = Joi.validate(req.body, schema)
@@ -55,24 +38,6 @@ module.exports = {
         }
       }
   },
-  validateFile:(schema) => {
-      return (req,res,next) =>{
-        const result = Joi.validate(req.file, schema)
-        if(result.error){
-          return res.status(400).json(result.error)
-        } else {
-          if(!req.value)
-            req.value = {}
-
-          if(!req.value['body'])
-            req.value['body'] = {}
-
-          req.value['file'] = result.value
-          next()
-        }
-      }
-  },
-
 
   schemas: {
     // Common schema

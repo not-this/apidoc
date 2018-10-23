@@ -49,7 +49,7 @@ router.route('/')
   .post(doctorsController.newDoctor)
 
 router.route('/:doctorId')
-  .get(doctorsController.getDoctorProfile)
+  .get(validateParam(schemas.idSchema,['doctorId']), doctorsController.getDoctorProfile)
   .patch(doctorsController.updateDoctorProfile)
 
 router.route('/:doctorId/profile-pictures')
@@ -59,20 +59,20 @@ router.route('/:doctorId/profile-pictures')
 
 router.route('/:doctorId/medical-setups')
   .post(doctorsController.createMedicalSetup)
-  .get(doctorsController.listMedicalSetups)
+  .get(validateParam(schemas.idSchema,['doctorId']), doctorsController.listMedicalSetups)
 
 router.route('/:doctorId/medical-setups/:setupId')
-  .get(doctorsController.getMedicalSetup)
+  .get(validateParam(schemas.idSchema,['doctorId','setupId']),doctorsController.getMedicalSetup)
   .patch(doctorsController.updateMedicalSetup)
   .delete(doctorsController.deleteMedicalSetup)
 
 router.route('/:doctorId/appointments/:appointmentId')
-  .get(doctorsController.getAppointment)
+  .get(validateParam(schemas.idSchema,['doctorId','appointmentId']),doctorsController.getAppointment)
 // .patch(doctorsController.updateAppointment)
   .delete(doctorsController.cancelAppointment)
 
 router.route('/:doctorId/appointments')
-  .get(doctorsController.appointments)
+  .get(validateParam(schemas.idSchema,['doctorId']), doctorsController.appointments)
 
 
 
