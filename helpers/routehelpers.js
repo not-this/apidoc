@@ -41,16 +41,53 @@ module.exports = {
 
   schemas: {
     // Common schema
+    idSchema: Joi.object().keys({
+      param: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required()
+    }),
     // POST for creating new profile picture for doctor and patient
-    newProfilePictureSchema:Joi.object().keys({}),  // Check for req.file instead req.params object (candidate for new validation)
+    // This validation is handled by multer - Check for file existince, fileType , TODO : Also check fileSize
+    // newProfilePictureSchema:Joi.object().keys({}),
 
     // Doctor POST
-    newDoctorSchema:Joi.object().keys({}),
-    newMedicalSetupSchema:Joi.object().keys({}),
+    newDoctorSchema:Joi.object().keys({
+      degrees:Joi.array().max(10).items(Joi.string().max(100)).required(),
+      firstName:Joi.string().required(),
+      lastName:Joi.string(),
+      about:Joi.string(),
+      treatments:Joi.array().max(500).items(Joi.string().max(100)),
+      speciality:Joi.array().max(10).items(Joi.string().max(1000)),
+      local_auth:Joi.object().keys({
+        email:Joi.string().email(),
+        password:Joi.string().required()
+      })
+    }),
+
+    newMedicalSetupSchema:Joi.object().keys({
+      name:Joi.string().required(),
+      address_lines:Joi.array().max(10).items(Joi.string().max(50)).required(),
+      contact_number:Joi.array().max(5).items(Joi.string().max(20)).required(),
+      timings:Joi.array().max(5).items(Joi.string().max(20)).required(),
+      slots:Joi.array().max(10).items(Joi.string().max(50)),
+      days:Joi.array().max(7).items(Joi.string().max(10)).required()
+    }),
 
     // Doctor PATCH
-    updateDoctorProfileSchema:Joi.object().keys({}),
-    updateMedicalSetupSchema:Joi.object().keys({}),
+    updateDoctorProfileSchema:Joi.object().keys({
+      degrees:Joi.array().max(10).items(Joi.string().max(100)),
+      firstName:Joi.string(),
+      lastName:Joi.string(),
+      about:Joi.string(),
+      treatmeants:Joi.array().max(500).items(Joi.string().max(1000)),
+      speciality:Joi.array().max(10).items(Joi.string().max(1000))
+    }),
+    updateMedicalSetupSchema:Joi.object().keys({
+      name:Joi.string(),
+      address_lines:Joi.array().max(10).items(Joi.string().max(50)),
+      contact_number:Joi.array().max(5).items(Joi.string().max(20)),
+      timings:Joi.array().max(5).items(Joi.string().max(20)),
+      slots:Joi.array().max(10).items(Joi.string().max(50)),
+      days:Joi.array().max(7).items(Joi.string().max(10))
+    }),
 
     // Doctor GET - use modified validateParam to validate schemas who require only params
 
@@ -61,11 +98,30 @@ module.exports = {
     // getDoctorAppointmentsSchema:Joi.object().keys({}),
 
     // Patient POST
-    newPatientSchema:Joi.object().keys({}),
-    newAppointmentSchema:Joi.object().keys({}),
+    newPatientSchema:Joi.object().keys({
+      firstName:Joi.string().required(),
+      lastName:Joi.string(),
+      age:Joi.number(),
+      local_auth:Joi.object().keys({
+        email:Joi.string().email(),
+        password:Joi.string().required()
+      })
+    }),
+    newAppointmentSchema:Joi.object().keys({
+      date:Joi.string().required(),
+      slot:Joi.number().required(),
+      place:Joi.string().required(),
+      description:Joi.string().required(),
+      // TODO - When creating an appointment add Doctor.medical_setups{name,address_lines,location,contact}
+      //        to Bookings.place {name,address_lines,location,contact}
+    }),
 
     // Patient PATCH
-    updatePatientProfileSchema:Joi.object().keys({}),
+    updatePatientProfileSchema:Joi.object().keys({
+      firstName:Joi.string(),
+      lastName:Joi.string(),
+      age:Joi.number(),
+    }),
 
     // Patient GET - use modified validateParam to validate schemas who require only params
 
@@ -90,9 +146,7 @@ module.exports = {
       model:Joi.string().required(),
       year:Joi.string().required()
     }),
-    idSchema: Joi.object().keys({
-      param: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required()
-    }),
+
     newCarSchema:Joi.object().keys({
       seller:Joi.string().regex(/^[0-9a-fA-F]{24}$/).required(),
       make:Joi.string().required(),

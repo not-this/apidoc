@@ -30,8 +30,8 @@ const patientSchema = new Schema({
     },
     password:String
   },
-  Age:Number,
-  Address:{
+  age:Number,
+  address:{
     address_lines:[String],
     city:{
       type: String
@@ -58,10 +58,7 @@ const patientSchema = new Schema({
     place: String,
     description: String,
   }],
-  contact_number:{
-    type:Number
-    // Required:true
-  }
+  contact_number:String
 
 })
 

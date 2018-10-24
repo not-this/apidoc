@@ -46,11 +46,12 @@ const multerConfig = {
 }
 
 router.route('/')
-  .post(doctorsController.newDoctor)
+  .post(validateBody(schemas.newDoctorSchema),doctorsController.newDoctor)
 
 router.route('/:doctorId')
   .get(validateParam(schemas.idSchema,['doctorId']), doctorsController.getDoctorProfile)
-  .patch(doctorsController.updateDoctorProfile)
+  .patch(validateParam(schemas.idSchema,['doctorId']),validateBody(schemas.updateDoctorProfileSchema),
+    doctorsController.updateDoctorProfile)
 
 router.route('/:doctorId/profile-pictures')
   .post(multer(multerConfig).single('photo'), doctorsController.uploadProfilePicture)
@@ -58,18 +59,20 @@ router.route('/:doctorId/profile-pictures')
 //   .patch()
 
 router.route('/:doctorId/medical-setups')
-  .post(doctorsController.createMedicalSetup)
+  .post(validateParam(schemas.idSchema,['doctorId']),validateBody(schemas.newMedicalSetupSchema),
+    doctorsController.createMedicalSetup)
   .get(validateParam(schemas.idSchema,['doctorId']), doctorsController.listMedicalSetups)
 
 router.route('/:doctorId/medical-setups/:setupId')
   .get(validateParam(schemas.idSchema,['doctorId','setupId']),doctorsController.getMedicalSetup)
-  .patch(doctorsController.updateMedicalSetup)
+  .patch(validateParam(schemas.idSchema,['doctorId','setupId']),validateBody(schemas.updateMedicalSetupSchema),
+    doctorsController.updateMedicalSetup)
   .delete(doctorsController.deleteMedicalSetup)
 
 router.route('/:doctorId/appointments/:appointmentId')
   .get(validateParam(schemas.idSchema,['doctorId','appointmentId']),doctorsController.getAppointment)
 // .patch(doctorsController.updateAppointment)
-  .delete(doctorsController.cancelAppointment)
+  .delete(validateParam(schemas.idSchema,['doctorId','appointmentId']),doctorsController.cancelAppointment)
 
 router.route('/:doctorId/appointments')
   .get(validateParam(schemas.idSchema,['doctorId']), doctorsController.appointments)

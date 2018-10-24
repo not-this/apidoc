@@ -9,7 +9,7 @@ const bookingSchema = new Schema({
   doctorId: {
     type:Schema.Types.ObjectId,
   },
-  date: Date,
+  date: String,
   slot: Number,
   place: String,
   description: String,

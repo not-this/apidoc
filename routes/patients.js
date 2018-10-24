@@ -47,11 +47,12 @@ const multerConfig = {
 
 
 router.route('/')
-  .post(patientsController.newPatient)
+  .post(validateBody(schemas.newPatientSchema),patientsController.newPatient)
 
 router.route('/:patientId')
-   .get(patientsController.getPatientProfile)
-   .patch(patientsController.updatePatientProfile)
+   .get(validateParam(schemas.idSchema,['patientId']),patientsController.getPatientProfile)
+   .patch(validateParam(schemas.idSchema,['patientId']),validateBody(schemas.updatePatientProfileSchema),
+      patientsController.updatePatientProfile)
 
 router.route('/:patientId/profile-pictures')
   .post(multer(multerConfig).single('photo'), patientsController.uploadProfilePicture)
@@ -62,20 +63,21 @@ router.route('/doctors')
   .get(patientsController.doctorsList)
 
 router.route('/doctors/:doctorId')
-  .get(patientsController.doctorDetails)
+  .get(validateParam(schemas.idSchema,['doctorId']),patientsController.doctorDetails)
 
 router.route('/:patientId/appointments')
-  .get(patientsController.appointments)
+  .get(validateParam(schemas.idSchema,['patientId']),patientsController.appointments)
 
 router.route('/:patientId/appointments/doctors/:doctorsId/:appointmentId')
-  .get(patientsController.appointmemnt)
+  .get(validateParam(schemas.idSchema,['patientId','appointmentId','doctorsId']),patientsController.appointmemnt)
   // .patch(patientController.updateAppointment)
 
 router.route('/:patientId/appointments/:appointmentId')
-  .delete(patientsController.cancelAppointment)
+  .delete(validateParam(schemas.idSchema,['patientId','appointmentId']),validateBody(schemas.createA),patientsController.cancelAppointment)
 
 router.route('/:patientId/appointments/doctors/:doctorId')
-  .post(patientsController.createAppointment)
+  .post(validateParam(schemas.idSchema,['patientId','doctorId']),validateBody(schemas.newAppointmentSchema),
+    patientsController.createAppointment)
 
 
 
