@@ -4,6 +4,12 @@ const router = express.Router()
 const doctorsController = require('../controllers/doctors')
 const {validateParam,validateBody,schemas} = require('../helpers/routehelpers')
 
+const passport = require('passport');
+const passportConf = require('../passport');
+
+const passportJWT = passport.authenticate('jwt', { session: false })
+const passportSignIn = passport.authenticate('local', { session: false })
+
 const multerConfig = {
   storage : multer.diskStorage({
     destination: (req,file,next)=>{
@@ -48,8 +54,11 @@ const multerConfig = {
 router.route('/')
   .post(validateBody(schemas.newDoctorSchema),doctorsController.newDoctor)
 
+router.route('/signin')
+  .post(passportSignIn,validateBody(schemas.newDoctorSchema),doctorsController.doctorSignIn)
+
 router.route('/:doctorId')
-  .get(validateParam(schemas.idSchema,['doctorId']), doctorsController.getDoctorProfile)
+  .get(passportJWT,validateParam(schemas.idSchema,['doctorId']), doctorsController.getDoctorProfile)
   .patch(validateParam(schemas.idSchema,['doctorId']),validateBody(schemas.updateDoctorProfileSchema),
     doctorsController.updateDoctorProfile)
 

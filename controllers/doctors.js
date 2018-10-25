@@ -3,23 +3,68 @@ const fs = require('fs')
 const Doctor = require('../models/doctor')
 const Patient = require('../models/patient')
 const Booking = require('../models/booking')
+const JWT = require('jsonwebtoken');
+// const User = require('../models/user');
+// const { JWT_SECRET } = require('../configuration');
+
+signToken = user => {
+  return JWT.sign({
+    iss: 'apidoc',
+    sub: user.id,
+    iat: new Date().getTime(), // current time
+    exp: new Date().setDate(new Date().getDate() + 1) // current time + 1 day ahead
+  }, 'secretcode');
+}
 
 module.exports = {
 
-  newDoctor: async (req,res,next)=>{
+
+
+
+  newDoctor: async (req, res, next) => {
     try {
-      console.log(req.body)
-      const newDoc = new Doctor(req.body)
-      const doctor = await newDoc.save()
-      res.status(201).json(doctor)
-    } catch(err){
-      next(err)
+      const { email, password } = req.value.body.local_auth;
+
+      // Check if there is a user with the same email
+      const foundDoctor = await Doctor.findOne({ email });
+      if (foundDoctor) {
+        return res.status(403).json({ error: 'Email is already in use'});
+      }
+
+      // Create a new doctor
+      const newDoc = new Doctor(req.value.body)
+      await newDoc.save()
+
+      // Generate the token
+      const token = signToken(newDoc);
+
+      // Respond with token
+      res.status(200).json({ token });
+    } catch(err) {
+        next(err)
     }
+
   },
+  doctorSignIn: async (req, res, next) => {
+    // Generate token
+    const token = signToken(req.value.user);
+    res.status(200).json({ token });
+  },
+
+  // newDoctor: async (req,res,next)=>{
+  //   try {
+  //     console.log(req.value.body)
+  //     const newDoc = new Doctor(req.value.body)
+  //     const doctor = await newDoc.save()
+  //     res.status(201).json(doctor)
+  //   } catch(err){
+  //     next(err)
+  //   }
+  // },
 
   getDoctorProfile: async(req,res,next)=>{
     try {
-      const doctor = await Doctor.findById(req.params.doctorId)
+      const doctor = await Doctor.findById(req.value.params.doctorId)
       res.status(200).json(doctor)
     } catch(err) {
       next(err )
@@ -28,9 +73,9 @@ module.exports = {
 
   updateDoctorProfile: async(req,res,next)=>{
     try {
-      const doc = await Doctor.findById(req.params.doctorId)
-      // const address = doc.medical_setups.id(req.params.setupId)
-      doc.set(req.body)
+      const doc = await Doctor.findById(req.value.params.doctorId)
+      // const address = doc.medical_setups.id(req.value.params.setupId)
+      doc.set(req.value.body)
       await doc.save()
       res.status(200).json(doc)
     } catch(err) {
@@ -40,8 +85,8 @@ module.exports = {
 
   getAppointment: async(req,res,next)=>{
     try {
-      const doctor = await Doctor.findById(req.params.doctorId)
-      res.status(200).json(doctor.active_bookings.id(req.params.appointmentId))
+      const doctor = await Doctor.findById(req.value.params.doctorId)
+      res.status(200).json(doctor.active_bookings.id(req.value.params.appointmentId))
     } catch(err) {
       next(err )
     }
@@ -82,10 +127,10 @@ module.exports = {
       // }
       // multer(multerConfig).single('photo')
       console.log(req.file)
-      const doctor = await Doctor.findById(req.params.doctorId)
+      const doctor = await Doctor.findById(req.value.params.doctorId)
       // doctor.profile_img.data = Buffer(fs.readFileSync(req.file.path), 'base64')
       // doctor.profile_img.contentType = 'image/png'
-      // req.body.photo = req.file.filename
+      // req.value.body.photo = req.file.filename
       doctor.photo = req.file.filename
       await doctor.save()
       res.status(201).send({success:true})
@@ -95,7 +140,7 @@ module.exports = {
   },
   cancelAppointment: async(req,res,next)=>{
     try {
-      const {appointmentId,doctorId} = req.params
+      const {appointmentId,doctorId} = req.value.params
       const doctor = await Doctor.findById(doctorId)
       const booking = doctor.active_bookings.id(appointmentId)
       const patientId = booking.patientId
@@ -110,7 +155,7 @@ module.exports = {
   },
   appointments: async(req,res,next)=>{
     try {
-      const doctor = await Doctor.findById(req.params.doctorId)
+      const doctor = await Doctor.findById(req.value.params.doctorId)
       console.log(doctor.active_bookings)
       res.status(200).json(doctor.active_bookings)
     } catch(err) {
@@ -119,8 +164,8 @@ module.exports = {
   },
   createMedicalSetup: async(req,res,next)=>{
     try {
-      const doctorId = req.params.doctorId
-      const newSetup = req.body
+      const doctorId = req.value.params.doctorId
+      const newSetup = req.value.body
       console.log(newSetup)
       const doctor = await Doctor.findById(doctorId)
       doctor.medical_setups.push(newSetup)
@@ -132,7 +177,7 @@ module.exports = {
   },
   listMedicalSetups: async(req,res,next)=>{
     try {
-      const doc = await Doctor.findById(req.params.doctorId)
+      const doc = await Doctor.findById(req.value.params.doctorId)
       res.status(200).json(doc.medical_setups)
     } catch(err) {
       next(err )
@@ -140,8 +185,8 @@ module.exports = {
   },
   getMedicalSetup: async(req,res,next)=>{
     try {
-      const doc = await Doctor.findById(req.params.doctorId)
-      const medical_setup = doc.medical_setups.id(req.params.setupId)
+      const doc = await Doctor.findById(req.value.params.doctorId)
+      const medical_setup = doc.medical_setups.id(req.value.params.setupId)
       res.status(200).json(medical_setup)
     } catch(err) {
       next(err )
@@ -149,17 +194,17 @@ module.exports = {
   },
   updateMedicalSetup: async(req,res,next)=>{
     try {
-      const doc = await Doctor.findById(req.params.doctorId)
-      const address = doc.medical_setups.id(req.params.setupId)
-      address.set(req.body)
+      const doc = await Doctor.findById(req.value.params.doctorId)
+      const address = doc.medical_setups.id(req.value.params.setupId)
+      address.set(req.value.body)
       await doc.save()
       res.status(200).send({ doc })
       // Promise version -
 
-      // Doctor.findById(req.params.doctorId)
+      // Doctor.findById(req.value.params.doctorId)
       //   .then((doc) => {
-      //     const address = doc.medical_setups.id(req.params.setupId);
-      //     address.set(req.body);
+      //     const address = doc.medical_setups.id(req.value.params.setupId);
+      //     address.set(req.value.body);
       //
       //
       //     return doc.save();
@@ -175,11 +220,11 @@ module.exports = {
 
   deleteMedicalSetup: async(req,res,next)=>{
     try {
-      const doc = await Doctor.findById(req.params.doctorId)
-      if(!doc.medical_setups.id(req.params.setupId)){
+      const doc = await Doctor.findById(req.value.params.doctorId)
+      if(!doc.medical_setups.id(req.value.params.setupId)){
         return res.status(400).json({message:"already deleted"})
       }
-      const removed = doc.medical_setups.pull(req.params.setupId)
+      const removed = doc.medical_setups.pull(req.value.params.setupId)
       await doc.save()
       console.log(removed)
       res.status(200).json({success:true})
