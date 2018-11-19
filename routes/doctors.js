@@ -54,6 +54,9 @@ const multerConfig = {
 router.route('/')
   .post(validateBody(schemas.newDoctorSchema),doctorsController.newDoctor)
 
+router.route('/signup')
+  .post(validateBody(schemas.doctorSignUpSchema),doctorsController.doctorSignUp)
+
 router.route('/signin')
   .post(passportSignIn,validateBody(schemas.newDoctorSchema),doctorsController.doctorSignIn)
 

@@ -61,7 +61,12 @@ module.exports = {
         password:Joi.string().required()
       })
     }),
-
+    doctorSignUpSchema:Joi.object().keys({
+      local_auth:Joi.object().keys({
+        email:Joi.string().email(),
+        password:Joi.string().required()
+      })
+    }),
     newMedicalSetupSchema:Joi.object().keys({
       name:Joi.string().required(),
       address_lines:Joi.array().max(10).items(Joi.string().max(50)).required(),

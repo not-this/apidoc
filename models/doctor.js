@@ -15,6 +15,7 @@ const medical_setupGeoSchema= new Schema({
 })
 
 const doctorSchema = new Schema({
+  medicoType:String, // doctor, paramedical[nurse, physiotherapy, emergency, otassistant], psychologist, pahrmacist 
   firstName:String,
   lastName:String,
   photo:String,
@@ -28,6 +29,10 @@ const doctorSchema = new Schema({
       type:String
     }
   },
+  doctorSlots:[{
+    time:Date,
+    length:Number
+  }],
   bookings:[{
     type:Schema.Types.ObjectId,
     ref:'booking'
@@ -66,7 +71,7 @@ const doctorSchema = new Schema({
   about:String,
   treatments:[String],
   speciality:[String],
-  live:false
+  videoConsultation:Boolean
 })
 
 doctorSchema.pre('save', async function(next) {

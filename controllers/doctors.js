@@ -20,6 +20,51 @@ module.exports = {
 
 
 
+  doctorSignUp: async (req, res, next) => {
+    try {
+      const { email, password } = req.value.body.local_auth;
+
+      // Check if there is a user with the same email
+      const foundDoctor = await Doctor.findOne({ email });
+      if (foundDoctor) {
+        return res.status(403).json({ error: 'Email is already in use'});
+      }
+
+      // Create a new doctor
+      const newDoc = new Doctor(req.value.body)
+      await newDoc.save()
+
+      // Generate the token
+      const token = signToken(newDoc);
+
+      // Respond with token
+      res.status(200).json({ token });
+    } catch(err) {
+        next(err)
+    }
+  },
+  //
+  // },
+  // INSTEAD of this use patch request to update basic profile - updateDoctorProfile & send docId if possible
+  // newDoctorOne: async (req, res, next) => {
+  //   try {
+  //     // Doctor will sign up (ubove route)
+  //     // it will create the doctor
+  //     const doctorId = req.value.body.id;
+  //     // if (!foundDoctor) {
+  //     //   return res.status(403).json({ error: 'Please sign up'});
+  //     // }
+  //     const docObj = JSON.parse(JSON.stringify(req.value.body))
+  //     // strip id fielf from the new object
+  //     delete docObj._id
+  //     // update the doctor
+  //     await Doctor.findByIdAndUpdate(id, docObj)
+  //     res.status(200).json({ success:true });
+  //   } catch(err) {
+  //       next(err)
+  //   }
+  //
+  // },
 
   newDoctor: async (req, res, next) => {
     try {
